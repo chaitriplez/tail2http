@@ -39,27 +39,19 @@ func init() {
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05.000",
 	})
-	config.monitorPath = *flag.String("monitor-path", "", "monitor directory eg. /tmp")
-	config.dataPath = *flag.String("data-path", "", "data directory for position file eg. /tmp/save")
-	config.filePattern = *flag.String("file-pattern", ".*", "regexp of file pattern eg. .*log$")
+	config.monitorPath = *flag.String("monitor-path", "", "directory of file eg. /program/log")
+	config.dataPath = *flag.String("data-path", "", "directory for save position file eg. /program/save")
+	config.filePattern = *flag.String("file-pattern", ".*", "regexp of file pattern to tail eg. .*log$")
 	config.url = *flag.String("url", "", "url of server eg. http://mockbin.org")
 	config.contentType = *flag.String("content-type", "application/json", "http header content-type eg. text/html")
 	config.rateLimit = *flag.Int("rate-limit", 60, "request per second")
-	config.checkInterval = *flag.Int("check-interval", 60, "check interval in second(s)")
-	config.dryRun = *flag.Bool("dry-run", false, "for testing")
+	config.checkInterval = *flag.Int("check-interval", 60, "check file change every x second(s)")
+	config.dryRun = *flag.Bool("dry-run", false, "true: not save position file and not request http")
 }
 
 func main() {
 	flag.Parse()
 	log.Infof("Config: %+v", config)
-
-	config.monitorPath = "/tmp/data"
-	config.dataPath = "/tmp/data/save"
-	config.filePattern = ".+\\..+"
-	config.url = "http://mockbin.org/bin/292dd902-af31-4f5e-813a-bfd7f5fd5215"
-	config.dryRun = true
-	config.rateLimit = 1
-	config.checkInterval = 10
 
 	limiter = rate.NewLimiter(rate.Limit(config.rateLimit), config.rateLimit)
 
